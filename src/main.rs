@@ -4,6 +4,7 @@ use std::env;
 use aoc_2025::InputType;
 
 pub mod day00;
+pub mod day01;
 
 fn main() -> Result<(), Box<dyn std::error::Error>>{
     println!("Hello, Advent of Code 2017!");
@@ -36,6 +37,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
         }
 
         match day {
+            01 => day01::day01(input_type, manual_name)?,
             _others => day00::day00(input_type, manual_name)?
         }
     }

@@ -44,3 +44,7 @@ pub fn str_to_chars(input: &str) -> Vec<char> {
 pub fn str_to_i32 (input: &str) -> i32 {
     input.parse::<i32>().unwrap()
 }
+
+pub fn str_to_u32 (input: &str) -> u32 {
+    input.parse::<u32>().unwrap()
+}
