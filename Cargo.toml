@@ -6,5 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+combinatorial = "0.2.1"
 divisors = "0.2.1"
 modular = "1.0.0"

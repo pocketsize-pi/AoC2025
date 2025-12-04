@@ -52,3 +52,7 @@ pub fn str_to_i64 (input: &str) -> i64 {
 pub fn str_to_u32 (input: &str) -> u32 {
     input.parse::<u32>().unwrap()
 }
+
+pub fn str_to_u64 (input: &str) -> u64 {
+    input.parse::<u64>().unwrap()
+}
