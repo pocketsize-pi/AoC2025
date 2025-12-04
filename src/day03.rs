@@ -1,7 +1,5 @@
+use std::char::from_digit;
 use std::cmp::max;
-// use combinatorial::Combinations;
-// use itertools::Itertools;
-use combination::*;
 use aoc_2025::*;
 
 pub fn day03(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std::error::Error>> {
@@ -37,62 +35,48 @@ pub fn day03(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std
     println!("The max joltage we can get is {}", max_jolt);
     // 17412
 
-    // cool, cool, cool, 12...
-    // let's bring in combinatorial help
-    let mut tried = Vec::new();
+    fn building_one_by_one (battery: Vec<u32>,
+                            start_id: usize,
+                            searching_for: usize,
+                            mut partial_list: String) -> String {
+        //debug
 
-    let mut big_max_jolt = 0;
-    let mut n=0;
-    for battery in batteries {
-        let mut local_max=0;
-        n+=1;
-        println!("Battery {}",n);
-        // println!("{:?}", battery);
-        // let choose_12 = Combinations::of_size(0..battery.len(),12);
-        // // println!("{:?}", battery);
-        // // println!("{:?}", choose_12);
-        // for combo_id in choose_12 {
-        //     // println!("{:?}", combo_id);
-        //     // smush the numbers together
-        //     let combo_string = combo_id.iter().filter_map(|i| Some(battery[*i].to_string())).collect::<String>();
-        //     // println!("{:?}", combo_string);
-        //     local_max = max(local_max, str_to_u64(&*combo_string));
-        // }
+        let end_search = battery.len() - (12 - searching_for) + 1;
 
-        // println!("{:?}", battery);
-        // I couldn't get combinatorial to work
-        // oh! generate combination is what is keeping our program stuck!
-        let mut choose_12: Vec<Vec<u32>> = combine::from_vec_at(&battery, 12);
-        // let choose_12: Vec<Vec<u32>> = battery.into_iter().combinations(12).collect();
-        // remove duplicates, there must be many
-        // let small_choose_12 = choose_12.into_iter().unique();
-        // println!("orig {:?}", choose_12);
-        choose_12.sort();
-        // println!("sort {:?}", choose_12);
-        choose_12.dedup();
-        // println!("dedup {:?}", choose_12);
-        println!(" ({} combinations)", choose_12.len());
+        // println!("Looking for {searching_for}, current word {:?}", partial_list);
+        // println!("Search space: {:?}", battery[start_id..end_search].to_vec());
 
+        let this_max = battery[start_id..end_search].iter().max().unwrap();
+        let this_max_id = battery[start_id..end_search].into_iter().position(|x| x == this_max).unwrap();
 
-        // println!("12 {:?}", choose_12);
-        for combo in choose_12 {
-            if !tried.contains(&combo) {
-                // println!("{:?}", combo_id);
-                // smush the numbers together
-                let combo_string = combo.iter().map(|n| n.to_string()).collect::<String>();
-                //.iter().filter_map(|i| Some(battery[*i].to_string())).collect::<String>();
-                // println!("{:?}", combo_string);
-                local_max = max(local_max, str_to_u64(&*combo_string));
-                tried.push(combo);
-            }
-
+        partial_list.push(from_digit(*this_max, 10).unwrap());
+        if partial_list.len() == 12 {
+            partial_list
+        }
+        else {
+            building_one_by_one(battery, this_max_id+start_id+1,searching_for+1, partial_list)
         }
 
+    }
 
-        big_max_jolt += local_max;
+
+    // cool, cool, cool, 12...
+    let mut big_max_jolt = 0;
+    // let mut n=0;
+    for battery in batteries {
+        // let mut local_max=0;
+        // n+=1;
+        // println!("Battery {}",n);
+        // println!("{:?}", battery);
+        // no, we build the number one number at a time, finding the max max number
+        let smart_build = building_one_by_one(battery, 0, 0, "".parse().unwrap());
+        // println!("Smart build: {:?}", smart_build);
+
+        big_max_jolt += str_to_u64(&*smart_build);
 
     }
     println!("The max joltage we can get with 12 batteries is {}", big_max_jolt);
+    // 172681562473501 hurrah!
 
     Ok(())
 }
