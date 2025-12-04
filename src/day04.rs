@@ -41,6 +41,43 @@ pub fn day04(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std
     println!("We can move {} toilet rolls", movable_rolls);
     // 1527 is the right answer
 
+    movable_rolls = 0;
+    let mut next_room;
+    loop {
+        next_room = Vec::new();
+        for location in &paper_room {
+            let mut num_rolls = 0;
+            let neighbours = location.get_neighbours(max_x, max_y);
+            // println!("{:?}", location);
+            // println!("  {:?}", neighbours);
+            for neighbour in &neighbours {
+                if paper_room.contains(&neighbour) {
+                    num_rolls += 1;
+                }
+            }
+            if num_rolls < 4 {
+                movable_rolls += 1;
+                // println!("valid {:?}", location);
+                // println!("  {:?}", neighbours);
+            }
+            else {
+                next_room.push(*location);
+            }
+        }
+        if next_room == paper_room {
+            // done with removals
+            break
+        }
+        else {
+            paper_room = next_room.clone();
+        }
+
+    }
+
+    println!("We can now move up to {} toilet rolls", movable_rolls);
+    //8690
+
+
 
     Ok(())
 }
