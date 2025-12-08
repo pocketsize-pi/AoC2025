@@ -45,6 +45,103 @@ pub fn day05(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std
     }
 
     println!("The total fresh ingredients is {}", total_fresh);
+    // 640
+
+    // -------------------------------------------------------------
+
+    fn compare_two_pairs (this_range: (u64, u64), next_range: (u64, u64)) -> Option<((u64,u64),bool)> {
+        // let output : Option<(u64,u64)>;
+        if (next_range.0..next_range.1+1).contains(&this_range.0) &
+            (next_range.0..next_range.1+1).contains(&this_range.1) {
+            None
+        }
+        else if (this_range.0..this_range.1+1).contains(&next_range.0) &
+            (next_range.0..next_range.1+1).contains(&this_range.1) {
+            // starts in this and ends in next
+            Some(((this_range.0,next_range.1),true))
+        }
+        else if (next_range.0..next_range.1+1).contains(&this_range.0) &
+            (this_range.0..this_range.1+1).contains(&next_range.1) {
+            // starts in next and ends in this
+            Some(((this_range.0,next_range.1),true))
+        }
+        else {
+            // nothing to merge, push;
+            Some((this_range, false))
+        }
+    }
+
+
+    let mut possible_fresh = fresh_ranges.clone();
+    // let mut i = 0;
+    loop {
+
+        let mut new_fresh = Vec::new();
+        let mut skip_this = false;
+        // println!("{:?}", possible_fresh);
+        for r in 0..possible_fresh.len()-1 {
+
+            if skip_this  {
+                skip_this = false;
+                continue;
+            }
+            // ranges is sorted, so we just need to build a list that is good and has no overlap
+            let this_range = fresh_ranges[r];
+            // process last point
+            let next_range = fresh_ranges[r+1];
+
+            let reduction = compare_two_pairs(this_range, next_range);
+
+            match reduction {
+                None => {}
+                Some((new_range,skip)) => {
+                    new_fresh.push(new_range);
+                    if skip {
+                        skip_this = true;
+                    }
+                }
+            }
+        }
+        // println!("  {:?}", new_fresh);
+
+        // sort out last pair
+        let reduction = compare_two_pairs(*new_fresh.last().unwrap(), *possible_fresh.last().unwrap());
+
+        match reduction {
+            None => {*new_fresh.last_mut().unwrap() = *possible_fresh.last().unwrap() }
+            Some((new_range, skip)) => {
+                if skip {
+                    new_fresh.push(new_range);
+                }
+                else {
+                    new_fresh.push(*possible_fresh.last().unwrap());
+                }
+            }
+        }
+
+        // println!("  {:?}", new_fresh);
+
+        if new_fresh == possible_fresh {
+            // println!("break?");
+            break;
+        }
+        possible_fresh = new_fresh.clone();
+
+        // i += 1;
+        // if i >= 10 {
+        //     break;
+        // }
+
+    }
+
+    total_fresh = 0;
+    for range in possible_fresh {
+        total_fresh += (range.0..range.1+1).count();
+    }
+
+    println!("The total possible fresh ingredients is {}", total_fresh);
+    // 11753977975152 too low
+
 
 
     Ok(())
