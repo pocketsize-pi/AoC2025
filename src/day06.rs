@@ -116,6 +116,12 @@ pub fn day06(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std
 
             // check if we are done (all spaces), or end of line!
             if (this_value == "" )| space_data[0].is_empty(){
+
+                // but we mustn't forget the last one!
+                if space_data[0].is_empty() {
+                    numbers.push(str_to_u64(&*this_value));
+                }
+
                 // when all are spaces and we remove them, we have all the numbers for this op
                 for num in numbers {
                     match op {
@@ -137,6 +143,7 @@ pub fn day06(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std
 
     println!("The cephalopod total of the worksheet is {}", worksheet_total);
     //7450962480322 too low
+    // 7450962489289 we get the right answer when we don't forget the last one!
 
     Ok(())
 }
