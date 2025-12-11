@@ -83,5 +83,50 @@ pub fn day07(input_type: InputType, manual_name: &str) -> Result<(), Box<dyn std
     println!("There are {num_splits} splits of the tachion beam");
     // 1592
 
+    // Part 2 is doesn't care about visited, but about how many times we get to the bottom
+    let mut num_timelines : u128 = 0;
+    tachion_queue = VecDeque::new();
+    // tachion_visited = VecDeque::new();
+
+    tachion_queue.push_front(start_point);
+
+    while !tachion_queue.is_empty() {
+
+        // pop tachion position
+        let mut this_tachion = tachion_queue.pop_front().unwrap();
+        // println!("this tachion {:?}", this_tachion);
+
+        // move it down
+        this_tachion.move_one_udlr(&Down);
+
+        // check that we are still inside the map!
+        if this_tachion.within_dimensions(map_cols as u32, map_rows as u32) {
+            // is it a splitter?
+            if gates_map.contains_key(&this_tachion) {
+                // if it is a splitter
+
+                // create two points, left and right
+                let tachion_left = this_tachion.move_one_to_new_udlr(Left);
+                let tachion_right = this_tachion.move_one_to_new_udlr(Right);
+
+                // a move left or right will always leave us in the map due to its configuration
+                tachion_queue.push_front(tachion_left);
+                tachion_queue.push_front(tachion_right);
+
+            }
+            else {
+
+                tachion_queue.push_front(this_tachion);
+            }
+        }
+        else {
+            // if we are not in the map, we have reached the final path! increase timelines
+            num_timelines += 1;
+        }
+
+    }
+
+    println!("There are {num_timelines} timelines in this tachion beam");
+
     Ok(())
 }
