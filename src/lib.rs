@@ -119,6 +119,9 @@ impl Point {
     pub fn new(c_x: usize, r_y: usize) -> Self {
         Point{c_x: c_x as i32, r_y: r_y as i32}
     }
+    pub fn default() -> Self {
+        Point{c_x: 0, r_y: 0}
+    }
     pub fn move_one(&mut self, direction: &Direction)
     {
         self.move_along(direction, &1);
@@ -158,8 +161,8 @@ impl Point {
         self.move_along(&get_direction(direction), length);
     }
 
-    pub fn within_dimensions(self, max_x: u32, max_y: u32) -> bool{
-        (self.r_y >= 0) & (self.r_y < max_y as i32) & (self.c_x >= 0) & (self.c_x < max_x as i32)
+    pub fn within_dimensions(self, max_c_x: u32, max_r_y: u32) -> bool{
+        (self.r_y >= 0) & (self.r_y < max_r_y as i32) & (self.c_x >= 0) & (self.c_x < max_c_x as i32)
     }
 
     pub fn add(&mut self, offset_point: Point) {
@@ -197,6 +200,10 @@ impl Point {
             }
         }
         output
+    }
+
+    pub fn move_one_to_new_udlr(self, udlr_direction: UdlrDirection) -> Point {
+        self.move_one_to_new(&get_direction(&udlr_direction))
     }
 
     pub fn get_neighbours(self, max_x: u32, max_y: u32) -> Vec<Point> {
